@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-ssr/
+coverage/
+storybook-static/
+playwright-report/
+test-results/
+public/
+*.svg
+*.ico
+*.woff
+*.woff2

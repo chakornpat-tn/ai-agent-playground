@@ -1,0 +1,45 @@
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*.user
+.vscode/*.code-workspace
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Codex/agent-local state
+.agents/
+.codex/
+skills-lock.json
+
+# Graphify generated output
+graphify-out/
+
+# Vue/Vite generated output and local dependencies
+vue-app/node_modules/
+vue-app/dist/
+vue-app/dist-ssr/
+vue-app/.vite/
+vue-app/coverage/
+vue-app/storybook-static/
+vue-app/playwright-report/
+vue-app/test-results/
+vue-app/.eslintcache
+
+# Rust build output and local data
+backend/target/
+backend/target-*/
+backend/*.db
+backend/*.db-*
+backend/coverage.info
+
+# Generic generated files
+*.log
+*.tsbuildinfo
+*.cache
+
+# Superseded standalone prototype; the Vue app and DESIGN.md are canonical.
+farmart-grocery.html

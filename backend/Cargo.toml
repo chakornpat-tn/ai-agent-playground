@@ -1,0 +1,23 @@
+[package]
+name = "farmart-backend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+async-trait = "0.1"
+axum = "0.8"
+diesel = { version = "2.2", features = ["sqlite", "r2d2"] }
+libsqlite3-sys = { version = "0.38", features = ["bundled"] }
+dotenvy = "0.15"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+utoipa = { version = "5", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "9", features = ["axum", "vendored"] }
+
+[dev-dependencies]
+tower = "0.5"

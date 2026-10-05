@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "vue", "vitest"],
+  "env": {
+    "browser": true
+  },
+  "ignorePatterns": [
+    "dist/**",
+    "dist-ssr/**",
+    "coverage/**",
+    "storybook-static/**",
+    "playwright-report/**",
+    "test-results/**"
+  ],
+  "categories": {
+    "correctness": "error"
+  }
+}
