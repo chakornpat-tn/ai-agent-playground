@@ -127,11 +127,25 @@ async fn cart_endpoint_adds_product_and_returns_totals() {
     let response = app().oneshot(request).await.unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     let body = json_response(response).await;
-    assert_eq!(body["session_id"], "session-1");
+    assert!(body["session_id"].as_str().is_some_and(|id| id.len() == 64));
     assert_eq!(body["item_count"], 2);
     assert_eq!(body["subtotal"], 6.0);
     assert_eq!(body["items"][0]["product"]["id"], 1);
     assert_eq!(body["items"][0]["line_total"], 6.0);
+}
+
+#[tokio::test]
+async fn cart_endpoint_does_not_accept_unknown_client_session_ids() {
+    let request = Request::post("/api/v1/cart/items")
+        .header("content-type", "application/json")
+        .header("x-session-id", "another-users-session")
+        .body(Body::from(r#"{"product_id":1,"quantity":1}"#))
+        .unwrap();
+
+    let response = app().oneshot(request).await.unwrap();
+    let body = json_response(response).await;
+    assert_eq!(body["item_count"], 1);
+    assert_ne!(body["session_id"], "another-users-session");
 }
 
 #[tokio::test]

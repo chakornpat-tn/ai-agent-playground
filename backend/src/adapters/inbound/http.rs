@@ -8,37 +8,35 @@ use axum::{
     http::{HeaderMap, HeaderValue, StatusCode},
     routing::{get, patch, post},
 };
-use std::sync::{
-    Arc,
-    atomic::{AtomicU64, Ordering},
-};
+use getrandom::fill as fill_random;
+use std::sync::Arc;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 #[derive(Clone)]
 pub struct HttpState {
     pub catalog: Arc<dyn CatalogPort>,
     pub carts: Arc<CartStore>,
-    next_session: Arc<AtomicU64>,
 }
 
 impl HttpState {
     pub fn new(catalog: Arc<dyn CatalogPort>) -> Self {
-        Self {
-            catalog,
-            carts: Arc::new(CartStore::default()),
-            next_session: Arc::new(AtomicU64::new(1)),
-        }
+        Self { catalog, carts: Arc::new(CartStore::default()) }
     }
 
     fn session_id(&self, headers: &HeaderMap) -> String {
-        headers
+        if let Some(session_id) = headers
             .get("x-session-id")
             .and_then(|value| value.to_str().ok())
             .filter(|value| !value.is_empty())
-            .map(str::to_owned)
-            .unwrap_or_else(|| {
-                format!("session-{}", self.next_session.fetch_add(1, Ordering::Relaxed))
-            })
+            .filter(|value| self.carts.has_session(value))
+        {
+            return session_id.to_owned();
+        }
+
+        let mut bytes = [0_u8; 32];
+        fill_random(&mut bytes).expect("OS randomness unavailable");
+        let session_id: String = bytes.iter().map(|byte| format!("{byte:02x}")).collect();
+        session_id
     }
 }
 #[utoipa::path(get,path="/api/v1/health",responses((status=200,body=HealthResponse)))]

@@ -171,7 +171,13 @@ impl CatalogPort for DieselCatalogAdapter {
             .bind::<BigInt, _>(per_page)
             .bind::<BigInt, _>((page - 1) * per_page)
             .load::<ProductRow>(&mut c)?;
-        let total = sql_query("SELECT count(*) AS count FROM products p WHERE p.active=1")
+        let total_sql = "SELECT count(*) AS count FROM products p JOIN categories c ON c.id=p.category_id JOIN brands b ON b.id=p.brand_id WHERE p.active=1 AND (? IS NULL OR (lower(p.name) LIKE ? OR lower(b.name) LIKE ?)) AND (? IS NULL OR p.category_id=?)";
+        let total = sql_query(total_sql)
+            .bind::<Nullable<Text>, _>(f.q.as_ref().map(|x| format!("%{}%", x.to_lowercase())))
+            .bind::<Nullable<Text>, _>(f.q.as_ref().map(|x| format!("%{}%", x.to_lowercase())))
+            .bind::<Nullable<Text>, _>(f.q.as_ref().map(|x| format!("%{}%", x.to_lowercase())))
+            .bind::<Nullable<Integer>, _>(f.category_id)
+            .bind::<Nullable<Integer>, _>(f.category_id)
             .get_result::<CountRow>(&mut c)?
             .count;
         Ok(ProductList { items: rows.into_iter().map(Into::into).collect(), page, per_page, total })
@@ -269,7 +275,7 @@ mod tests {
         let result = adapter.products(&f).await.expect("products");
         assert_eq!(result.page, 1);
         assert_eq!(result.per_page, 1);
-        assert_eq!(result.total, 2);
+        assert_eq!(result.total, 1);
         assert_eq!(result.items.len(), 1);
         assert_eq!(result.items[0].name, "Apple");
         assert_eq!(result.items[0].compare_at_price, Some(4.0));

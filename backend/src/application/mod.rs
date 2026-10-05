@@ -40,6 +40,12 @@ pub struct CartStore {
 }
 
 impl CartStore {
+    pub fn has_session(&self, session_id: &str) -> bool {
+        self.items.read().expect("cart store read lock").contains_key(session_id)
+    }
+}
+
+impl CartStore {
     pub fn items(&self, session_id: &str) -> HashMap<i32, i32> {
         self.items
             .read()

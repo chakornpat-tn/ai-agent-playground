@@ -1,3 +1,4 @@
+use axum::http::{HeaderName, HeaderValue, Method};
 use diesel::{
     prelude::*,
     r2d2::{ConnectionManager, Pool},
@@ -52,8 +53,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".into());
     let port = env::var("PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(8080);
     let addr: SocketAddr = format!("{host}:{port}").parse()?;
+    let frontend_origin = env::var("FRONTEND_ORIGIN")
+        .unwrap_or_else(|_| "http://localhost:5173".into())
+        .parse::<HeaderValue>()?;
+    let cors = CorsLayer::new()
+        .allow_origin(frontend_origin)
+        .allow_methods([Method::GET, Method::POST, Method::PATCH, Method::DELETE])
+        .allow_headers([
+            HeaderName::from_static("content-type"),
+            HeaderName::from_static("x-session-id"),
+        ]);
     info!("Farmart API listening at http://{addr}/docs");
-    axum::serve(TcpListener::bind(addr).await?, http::router(state).layer(CorsLayer::permissive()))
-        .await?;
+    axum::serve(TcpListener::bind(addr).await?, http::router(state).layer(cors)).await?;
     Ok(())
 }
