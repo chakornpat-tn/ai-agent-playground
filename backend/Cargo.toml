@@ -2,6 +2,15 @@
 name = "farmart-backend"
 version = "0.1.0"
 edition = "2024"
+default-run = "farmart-backend"
+
+[[bin]]
+name = "farmart-backend"
+path = "src/main.rs"
+
+[[bin]]
+name = "api-health"
+path = "api/health.rs"
 
 [dependencies]
 async-trait = "0.1"
@@ -19,6 +28,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 utoipa = { version = "5", features = ["axum_extras"] }
 utoipa-swagger-ui = { version = "9", features = ["axum", "vendored"] }
+vercel_runtime = "2.4.1"
 
 [dev-dependencies]
 tower = "0.5"
