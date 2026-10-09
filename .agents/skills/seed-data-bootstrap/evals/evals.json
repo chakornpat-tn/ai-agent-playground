@@ -1,0 +1,17 @@
+{
+  "skill_name": "seed-data-bootstrap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Initialize this Farmart project with realistic local seed data so I can run the API and frontend immediately. Use the existing schema and the data currently shown by the product, home, and product-detail flows. It must be repeatable and work offline.",
+      "expected_output": "A deterministic, idempotent seed path using the existing Farmart SQLite schema, with verification of the API flows and no network dependency.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Add development fixtures to a project with existing migrations and a SQLite database. Inspect the current models and UI consumers first, seed all required parent and child records, and prove that running the seed twice does not create duplicates.",
+      "expected_output": "A project-consistent seed implementation with valid relationships, repeatability, and local verification.",
+      "files": []
+    }
+  ]
+}

@@ -11,8 +11,6 @@ Thumbs.db
 !.env.example
 
 # Codex/agent-local state
-.agents/
-.codex/
 skills-lock.json
 
 # Graphify generated output
